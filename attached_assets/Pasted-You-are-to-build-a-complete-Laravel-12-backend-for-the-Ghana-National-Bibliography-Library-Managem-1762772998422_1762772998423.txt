@@ -1,0 +1,209 @@
+You are to build a complete Laravel 12 backend for the Ghana National Bibliography – Library Management System (GHLA).
+
+🎯 1. Project Goal
+
+Develop a role-based backend to manage Ghana’s national bibliography and library stock data.
+
+User roles & permissions
+
+Role	Permissions
+Super Administrator	Full control, user & system management
+Classifications Manager	Cataloguing and assigning class numbers
+Entry Manager	Adding and maintaining stock entries
+⚙️ 2. Framework & Architecture
+
+Use Laravel 12 (latest stable).
+
+Follow MVC + Service/Repository pattern for maintainability.
+
+Use Eloquent ORM for database interactions.
+
+Configure Laravel Sanctum or Passport for JWT authentication.
+
+Enable CORS for React frontend access.
+
+🔐 3. Authentication & Authorization
+
+Implement Role-Based Access Control (RBAC).
+
+Use JWT tokens (short-lived access + refresh token).
+
+Roles: super_admin, classifications_manager, entry_manager.
+
+Protect all routes with middleware:
+auth:sanctum or auth:api + role:super_admin, role:classifications_manager, etc.
+
+Auth Endpoints
+
+Method	Endpoint	Description
+POST	/api/auth/signin	User login
+POST	/api/auth/signout	Logout
+POST	/api/users	Create user (Super Admin only)
+GET	/api/users	List users (Super Admin only)
+
+Use Laravel Hash facade for password hashing.
+All requests validated via FormRequest classes.
+
+🗄️ 4. Database Design
+
+Use MySQL or PostgreSQL with migrations + seeders.
+
+Table	Key Fields
+users	id, name, email, password, role, timestamps
+stocks	id, title, author, isbn, classification_id, is_gnb_stock(bool), timestamps
+books	id, title, author, publication_date, isbn, stock_id, timestamps
+indexed_articles	id, title, author, publication, is_gnb_stock, timestamps
+classifications	id, class_number, description, timestamps
+reports	id, type, filters(json), generated_by(user_id), file_path, timestamps
+
+Use foreign keys + cascade deletes.
+
+📚 5. Core API Features / Endpoints
+Stock Management
+GET    /api/stock
+POST   /api/stock
+PUT    /api/stock/{id}
+DELETE /api/stock/{id}
+GET    /api/stock/{id}
+
+Classification Management
+GET    /api/classifications
+POST   /api/classifications
+PUT    /api/classifications/{id}
+DELETE /api/classifications/{id}
+
+Indexed Articles
+GET    /api/articles
+POST   /api/articles
+PUT    /api/articles/{id}
+DELETE /api/articles/{id}
+
+Ghana National Bibliography (GNB)
+POST /api/gnb/generate
+GET  /api/gnb/exports/{id}
+
+Reports
+GET  /api/reports
+POST /api/reports/generate
+
+User Management
+POST   /api/users
+GET    /api/users
+GET    /api/users/{id}
+PUT    /api/users/{id}
+DELETE /api/users/{id}
+
+🗂️ 6. File Storage
+
+Use Laravel Storage (local or public) for:
+
+Book covers
+
+Generated reports (PDF)
+
+GNB publication files
+
+Store file paths / URLs in the database.
+
+✅ 7. Validation & Error Handling
+
+Use FormRequest classes for all validations.
+
+All responses must follow this JSON schema:
+
+{
+  "status": "success",
+  "message": "Book added successfully",
+  "data": { ... }
+}
+
+
+Use proper HTTP codes (200, 201, 400, 401, 403, 404, 500).
+
+🧾 8. Reporting & PDF Generation
+
+Use Laravel DomPDF or Snappy.
+
+Reports filterable by:
+
+Date range
+
+Classification
+
+Stock type
+
+Role category
+
+🔒 9. Security
+
+Sanitize all inputs.
+
+Protect against XSS & SQL Injection.
+
+Apply rate limiting on auth routes.
+
+Use HTTPS and httpOnly cookies in production.
+
+🧪 10. Testing
+
+Write Feature + Unit tests for:
+
+Auth flow
+
+Role permissions
+
+CRUD operations
+
+Report generation
+
+📘 11. API Documentation
+
+Use L5-Swagger or Scribe.
+
+Include:
+
+Sample requests + responses
+
+.env.example with database, mail, JWT placeholders
+
+🚀 12. Deployment Setup
+
+.env must contain:
+
+APP_ENV=production
+DB_HOST=...
+DB_PORT=...
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
+JWT_SECRET=...
+FILESYSTEM_DISK=public
+
+
+Then run optimizations:
+
+php artisan config:cache
+php artisan route:cache
+php artisan optimize
+
+
+Enable daily DB + uploads backups.
+
+📦 13. Deliverables
+
+Complete Laravel 12 source code
+
+Postman / Insomnia API collection
+
+DB migrations & seeders
+
+PDF templates for reports
+
+Swagger / Scribe API docs
+
+README.md with setup instructions
+
+💻 Build Goal for Replit AI
+
+Implement the full backend stack described above, ensuring all routes, models, controllers, middlewares, and services are correctly built and tested.
+When finished, output the folder structure, routes list, and installation steps.
