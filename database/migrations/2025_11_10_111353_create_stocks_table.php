@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,8 +12,32 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('author');
+            $table->date('date')->nullable();
+            $table->string('vendor')->nullable();;
+            $table->string('matForm')->nullable();;
+            $table->string('matType')->nullable();;
+            $table->string('contentDesc')->nullable();;
+            $table->string('title')->nullable();;
+            $table->string('author');;
+            $table->string('publisher')->nullable();;
+            $table->string('copyNo')->nullable();;
+            $table->string('accessionNo')->nullable();;
+            $table->string('areaOfResponsibility')->nullable();;
+            $table->string('editionStatement')->nullable();;
+            $table->string('publishersName')->nullable();;
+            $table->string('placeOfPublication')->nullable();;
+            $table->string('yearOfPublication')->nullable();;
+            $table->string('preliminaryPages')->nullable();;
+            $table->string('numberOfPages')->nullable();;
+            $table->string('heightOfBook')->nullable();;
+            $table->string('poBox')->nullable();;
+            $table->string('poBoxLocation')->nullable();
+            $table->string('telephone')->nullable();;
+            $table->string('email')->nullable();;
+            $table->string('website')->nullable();;
+            $table->string('illustrations')->nullable();;
+            $table->string('subject')->nullable();;
+            $table->string('nonFictionType')->nullable();;
             $table->string('isbn')->nullable()->unique();
             $table->foreignId('classification_id')->nullable()->constrained('classifications')->onDelete('set null');
             $table->boolean('is_gnb_stock')->default(false);

@@ -14,10 +14,20 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
-            'author' => 'sometimes|string|max:255',
-            'publication' => 'sometimes|string|max:255',
-            'is_gnb_stock' => 'boolean',
+            'date' => 'required|date',
+            'contentDesc' => 'required|string|max:255',
+            'writersDetails' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'issn' => 'required|string|max:255',
+            'articleOrNot' => 'required|string|max:255',
+            'matType' => 'required|string|max:255',
+            'newspaperJournalMagazineName' => 'required|string|max:255',
+            'numberOfPages' => 'required|string|max:255',
+            'poBox' => 'required|string|max:255',
+            'poBoxLocation' => 'required|string|max:255',
+            'telephone' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'website' => 'required|url|max:255',
         ];
     }
 }

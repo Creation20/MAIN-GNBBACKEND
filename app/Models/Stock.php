@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stock extends Model
 {
-    protected $fillable = ['title', 'author', 'isbn', 'classification_id', 'is_gnb_stock'];
+    protected $fillable = ['date','vendor','matForm','matType','contentDesc','title','author','publisher','isbn','copyNo','accessionNo','areaOfResponsibility','editionStatement','publishersName','placeOfPublication','preliminaryPages','numberOfPages','heightOfBook','poBox','poBoxLocation','telephone','email','website','illustrations','subject','is_gnb_stock','nonFictionType'];
 
     protected $casts = [
         'is_gnb_stock' => 'boolean',
