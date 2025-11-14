@@ -17,7 +17,8 @@ class UpdateClassificationRequest extends FormRequest
         
         return [
             'class_number' => 'sometimes|string|unique:classifications,class_number,'.$classificationId,
-            'description' => 'nullable|string',
+            'isbn' => 'nullable|string',
+            'subject'=> 'nullable|string',
         ];
     }
 }

@@ -15,7 +15,8 @@ class StoreClassificationRequest extends FormRequest
     {
         return [
             'class_number' => 'required|string|unique:classifications',
-            'description' => 'nullable|string',
+            'isbn' => 'nullable|string',
+            'subject'=> 'nullable|string',
         ];
     }
 }

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('classifications', function (Blueprint $table) {
             $table->id();
             $table->string('class_number')->unique();
-            $table->text('description')->nullable();
+            $table->string('isbn')->nullable();
+            $table->string('subject')->nullable();
             $table->timestamps();
         });
     }

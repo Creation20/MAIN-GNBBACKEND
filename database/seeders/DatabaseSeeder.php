@@ -37,21 +37,8 @@ class DatabaseSeeder extends Seeder
 
         // Create Classifications (Dewey Decimal System)
         $classifications = [
-            ['class_number' => '000', 'description' => 'Computer science, information & general works'],
-            ['class_number' => '100', 'description' => 'Philosophy & psychology'],
-            ['class_number' => '200', 'description' => 'Religion'],
-            ['class_number' => '300', 'description' => 'Social sciences'],
-            ['class_number' => '400', 'description' => 'Language'],
-            ['class_number' => '500', 'description' => 'Science'],
-            ['class_number' => '600', 'description' => 'Technology'],
-            ['class_number' => '700', 'description' => 'Arts & recreation'],
-            ['class_number' => '800', 'description' => 'Literature'],
-            ['class_number' => '900', 'description' => 'History & geography'],
-            ['class_number' => '966.7', 'description' => 'Ghana - History'],
-            ['class_number' => '823', 'description' => 'English fiction'],
-            ['class_number' => '320.966', 'description' => 'Politics of Ghana'],
-            ['class_number' => '398.2096', 'description' => 'African folklore'],
-            ['class_number' => '641.5966', 'description' => 'Ghanaian cooking'],
+            ['class_number' => '823', 'isbn'=> '837487423748283','subject'=> 'Math'],
+            ['class_number' => '100', 'isbn'=>'3482684882848','subject'=> 'english'],
         ];
 
         foreach ($classifications as $class) {
@@ -61,6 +48,7 @@ class DatabaseSeeder extends Seeder
         // Create Stock Entries
         $stocks = [
             [
+                'id' => 1,
                 'date' => '01/01/23',
                 'vendor' => 'Legal Deposits',
                 'matForm' => 'HardCopy',
@@ -92,6 +80,7 @@ class DatabaseSeeder extends Seeder
                 'is_gnb_stock' => true,
             ],
             [
+                'id' => 2,
                 'date' => '01/01/25',
                 'vendor' => 'Legal Deposits',
                 'matForm' => 'HardCopy',
@@ -134,7 +123,7 @@ class DatabaseSeeder extends Seeder
                 'date' => '01/04/25',
                 'contentDesc' => 'adult',
                 'numberOfPages' => '60',
-                'matType'=> 'HardCopy',
+                'matType' => 'HardCopy',
                 'title' => 'Ghana\'s Economic Growth: Challenges and Opportunities',
                 'writersDetails' => 'Dr. Kwesi Agyeman',
                 'newspaperJournalMagazineName' => 'African Medicine, 2023',
@@ -151,7 +140,7 @@ class DatabaseSeeder extends Seeder
                 'date' => '01/01/25',
                 'contentDesc' => 'adult',
                 'numberOfPages' => '60',
-                  'matType'=> 'HardCopy',
+                'matType' => 'HardCopy',
                 'articleOrNot' => 'yes',
                 'title' => 'Ghana\'s Economic Growth: Challenges and Opportunities',
                 'writersDetails' => 'Dr. Kwesi Agyeman',

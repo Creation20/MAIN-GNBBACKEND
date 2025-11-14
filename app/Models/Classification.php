@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Classification extends Model
 {
-    protected $fillable = ['class_number', 'description'];
+    protected $fillable = ['class_number', 'isbn', 'subject'];
 
     public function stocks()
     {
