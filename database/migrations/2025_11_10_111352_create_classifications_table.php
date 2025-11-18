@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('classifications', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
             $table->string('class_number')->unique();
             $table->string('isbn')->nullable();
             $table->string('subject')->nullable();

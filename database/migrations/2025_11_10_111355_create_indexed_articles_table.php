@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('poBoxLocation');
             $table->string('telephone');
             $table->string('email');
+            $table->string('subject');
             $table->string('website');
             $table->timestamps();
         });

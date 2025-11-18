@@ -28,7 +28,7 @@ class StoreArticleRequest extends FormRequest
             'telephone' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'website' => 'required|url|max:255',
-
+            'classification_id' => 'nullable|exists:classifications,id',
         ];
     }
 }

@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->string('contentDesc')->nullable();;
             $table->string('title')->nullable();;
             $table->string('author');;
-            $table->string('publisher')->nullable();;
             $table->string('copyNo')->nullable();;
             $table->string('accessionNo')->nullable();;
             $table->string('areaOfResponsibility')->nullable();;
@@ -38,7 +37,10 @@ return new class extends Migration {
             $table->string('illustrations')->nullable();;
             $table->string('subject')->nullable();;
             $table->string('nonFictionType')->nullable();;
-            $table->string('isbn')->nullable()->unique();
+            $table->string('isbn')->nullable();
+            $table->string('gnb')->nullable();           
+            $table->string('class_number')->nullable();  
+            $table->string('sysOfClass')->nullable(); 
             $table->foreignId('classification_id')->nullable()->constrained('classifications')->onDelete('set null');
             $table->boolean('is_gnb_stock')->default(false);
             $table->timestamps();
@@ -50,6 +52,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('stocks');
+         Schema::table('stocks', function (Blueprint $table) {
+            $table->dropColumn(['gnb', 'sysOfClass', 'class_number']);
+        });
     }
 };

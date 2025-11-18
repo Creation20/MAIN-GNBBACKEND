@@ -16,8 +16,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('users', UserController::class);
     });
     
-    Route::middleware('role:super_admin,entry_manager')->group(function () {
+    Route::middleware('role:super_admin,entry_manager,classifications_manager')->group(function () {
         Route::apiResource('stock', StockController::class);
+        
+        // Additional classification assignment routes
+        Route::post('stock/{stock}/assign-classification', [StockController::class, 'assignClassification']);
+        Route::delete('stock/{stock}/remove-classification', [StockController::class, 'removeClassification']);
+        
         Route::apiResource('articles', ArticleController::class);
     });
     

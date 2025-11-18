@@ -14,24 +14,25 @@ class ArticleController extends Controller
 
     public function index()
     {
-        return $this->success(IndexedArticle::all(), 'Articles retrieved successfully');
+        $articles = IndexedArticle::with('classification')->get();
+        return $this->success($articles, 'Articles retrieved successfully');
     }
 
     public function store(StoreArticleRequest $request)
     {
         $article = IndexedArticle::create($request->validated());
-        return $this->success($article, 'Article created successfully', 201);
+        return $this->success($article->load('classification'), 'Article created successfully', 201);
     }
 
     public function show(IndexedArticle $article)
     {
-        return $this->success($article, 'Article retrieved successfully');
+        return $this->success($article->load('classification'), 'Article retrieved successfully');
     }
 
     public function update(UpdateArticleRequest $request, IndexedArticle $article)
     {
         $article->update($request->validated());
-        return $this->success($article, 'Article updated successfully');
+        return $this->success($article->load('classification'), 'Article updated successfully');
     }
 
     public function destroy(IndexedArticle $article)

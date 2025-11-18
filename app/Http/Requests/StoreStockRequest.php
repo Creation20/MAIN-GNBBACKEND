@@ -21,7 +21,6 @@ class StoreStockRequest extends FormRequest
             'contentDesc' => 'nullable|string|max:255',
             'title' => 'nullable|string|max:255',
             'author' => 'required|string|max:255',
-            'publisher' => 'nullable|string|max:255',
             'copyNo' => 'nullable|string|max:255',
             'accessionNo' => 'nullable|string|max:255',
             'areaOfResponsibility' => 'nullable|string|max:255',
