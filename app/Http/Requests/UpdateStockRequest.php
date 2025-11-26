@@ -4,53 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreStockRequest extends FormRequest
-{
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    public function rules(): array
-    {
-        return [
-            'date' => 'nullable|date',
-            'vendor' => 'nullable|string|max:255',
-            'matForm' => 'nullable|string|max:255',
-            'matType' => 'nullable|string|max:255',
-            'contentDesc' => 'nullable|string|max:255',
-            'title' => 'nullable|string|max:255',
-            'author' => 'required|string|max:255',
-            'publisher' => 'nullable|string|max:255',
-            'copyNo' => 'nullable|string|max:255',
-            'accessionNo' => 'nullable|string|max:255',
-            'areaOfResponsibility' => 'nullable|string|max:255',
-            'editionStatement' => 'nullable|string|max:255',
-            'publishersName' => 'nullable|string|max:255',
-            'placeOfPublication' => 'nullable|string|max:255',
-            'yearOfPublication' => 'nullable|string|max:255',
-            'preliminaryPages' => 'nullable|string|max:255',
-            'numberOfPages' => 'nullable|string|max:255',
-            'heightOfBook' => 'nullable|string|max:255',
-            'poBox' => 'nullable|string|max:255',
-            'poBoxLocation' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'website' => 'nullable|url|max:255',
-            'illustrations' => 'nullable|string|max:255',
-            'subject' => 'nullable|string|max:255',
-            'nonFictionType' => 'nullable|string|max:255',
-            'isbn' => 'nullable|string|max:255|unique:stocks,isbn',
-            'gnb' => 'nullable|string|max:255',
-            'sysOfClass' => 'nullable|string|max:255',
-            'class_number' => 'nullable|string|max:255',
-            'classification_id' => 'nullable|exists:classifications,id',
-            'is_gnb_stock' => 'nullable|boolean',
-        ];
-    }
-}
-
-// UpdateStockRequest.php
 class UpdateStockRequest extends FormRequest
 {
     public function authorize(): bool
@@ -62,38 +15,59 @@ class UpdateStockRequest extends FormRequest
     {
         $stockId = $this->route('stock') ? $this->route('stock')->id : null;
 
-        return [
-            'date' => 'nullable|date',
-            'vendor' => 'nullable|string|max:255',
-            'matForm' => 'nullable|string|max:255',
-            'matType' => 'nullable|string|max:255',
-            'contentDesc' => 'nullable|string|max:255',
-            'title' => 'nullable|string|max:255',
-            'author' => 'required|string|max:255',
-            'copyNo' => 'nullable|string|max:255',
-            'accessionNo' => 'nullable|string|max:255',
+        $rules = [
+            'date' => 'sometimes|date',
+            'vendor' => 'sometimes|string|in:legal-deposit,donation,purchase',
+            'matForm' => 'sometimes|string|in:Hardcopy,Softcopy,Audio,Hardcopy & Softcopy,Hardcopy & Audio,Softcopy & Audio,Hardcopy/Softcopy/Audio',
+            'matType' => 'sometimes|string|in:Fiction,Non-fiction',
+            'contentDesc' => 'sometimes|string|in:juvenile,adult',
+            'title' => 'sometimes|string|max:500',
+            'author' => 'sometimes|string|max:255',
+            'copyNo' => 'sometimes|string|max:255',
+            'accessionNo' => 'sometimes|string|max:100',
             'areaOfResponsibility' => 'nullable|string|max:255',
-            'editionStatement' => 'nullable|string|max:255',
+            'editionStatement' => 'nullable|string|max:100',
             'publishersName' => 'nullable|string|max:255',
-            'placeOfPublication' => 'nullable|string|max:255',
-            'yearOfPublication' => 'nullable|string|max:255',
-            'preliminaryPages' => 'nullable|string|max:255',
-            'numberOfPages' => 'nullable|string|max:255',
-            'heightOfBook' => 'nullable|string|max:255',
-            'poBox' => 'nullable|string|max:255',
+            'placeOfPublication' => 'sometimes|string|max:255',
+            'yearOfPublication' => 'sometimes|string|max:4',
+            'preliminaryPages' => 'nullable|string|max:50',
+            'numberOfPages' => 'sometimes|string|max:50',
+            'heightOfBook' => 'sometimes|string|max:50',
+            'poBox' => 'nullable|string|max:100',
             'poBoxLocation' => 'nullable|string|max:255',
-            'telephone' => 'nullable|string|max:255',
+            'telephone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'website' => 'nullable|url|max:255',
             'illustrations' => 'nullable|string|max:255',
             'subject' => 'nullable|string|max:255',
-            'nonFictionType' => 'nullable|string|max:255',
-            'isbn' => 'nullable|string|max:255|unique:stocks,isbn,'.$stockId,
+            'nonFictionType' => 'nullable|string|in:textbook,other',
             'gnb' => 'nullable|string|max:255',
-            'sysOfClass' => 'nullable|string|max:255',
-            'class_number' => 'nullable|string|max:255',
             'classification_id' => 'nullable|exists:classifications,id',
-            'is_gnb_stock' => 'nullable|boolean',
+            'is_gnb_stock' => 'sometimes|boolean',
         ];
+
+        // Conditional rules for donation
+        if ($this->input('vendor') === 'donation') {
+            $rules['materialSource'] = 'sometimes|string|in:Local,Foreign';
+        }
+
+        // Conditional rules for purchase
+        if ($this->input('vendor') === 'purchase') {
+            $rules['price'] = 'sometimes|string|max:255';
+        }
+
+        // Conditional rules for Non-fiction
+        if ($this->input('matType') === 'Non-fiction') {
+            $rules['nonFictionType'] = 'sometimes|string|in:textbook,other';
+        }
+
+        // ISBN validation with uniqueness check
+        if ($this->has('isbn') && $this->input('isbn')) {
+            $rules['isbn'] = $stockId 
+                ? 'nullable|string|max:255|unique:stocks,isbn,' . $stockId
+                : 'nullable|string|max:255|unique:stocks,isbn';
+        }
+
+        return $rules;
     }
 }

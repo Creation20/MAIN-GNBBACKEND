@@ -22,8 +22,30 @@ class StockController extends Controller
 
     public function store(StoreStockRequest $request)
     {
-        $stock = Stock::create($request->validated());
-        return $this->success($stock->load('classification'), 'Stock created successfully', 201);
+        try {
+            $data = $request->validated();
+            
+            // Handle conditional fields
+            // Remove materialSource if vendor is not Donation
+            if (!isset($data['vendor']) || $data['vendor'] !== 'Donation') {
+                unset($data['materialSource']);
+            }
+            
+            // Remove price if vendor is not Purchase
+            if (!isset($data['vendor']) || $data['vendor'] !== 'Purchase') {
+                unset($data['price']);
+            }
+            
+            // Remove nonFictionType if matType is not Non-fiction
+            if (!isset($data['matType']) || $data['matType'] !== 'Non-fiction') {
+                unset($data['nonFictionType']);
+            }
+            
+            $stock = Stock::create($data);
+            return $this->success($stock->load('classification'), 'Stock created successfully', 201);
+        } catch (\Exception $e) {
+            return $this->error('Failed to create stock: ' . $e->getMessage(), 500);
+        }
     }
 
     public function show(Stock $stock)
@@ -33,8 +55,27 @@ class StockController extends Controller
 
     public function update(UpdateStockRequest $request, Stock $stock)
     {
-        $stock->update($request->validated());
-        return $this->success($stock->load('classification'), 'Stock updated successfully');
+        try {
+            $data = $request->validated();
+            
+            // Handle conditional fields for update
+            if (isset($data['vendor']) && $data['vendor'] !== 'donation') {
+                $data['materialSource'] = null;
+            }
+            
+            if (isset($data['vendor']) && $data['vendor'] !== 'purchase') {
+                $data['price'] = null;
+            }
+            
+            if (isset($data['matType']) && $data['matType'] !== 'Non-fiction') {
+                $data['nonFictionType'] = null;
+            }
+            
+            $stock->update($data);
+            return $this->success($stock->load('classification'), 'Stock updated successfully');
+        } catch (\Exception $e) {
+            return $this->error('Failed to update stock: ' . $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -43,38 +84,42 @@ class StockController extends Controller
      */
     public function assignClassification(Request $request, Stock $stock)
     {
-        $request->validate([
-            'class_number' => 'required|string',
-            'isbn' => 'nullable|string',
-            'subject' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'class_number' => 'required|string',
+                'isbn' => 'nullable|string',
+                'subject' => 'nullable|string',
+            ]);
 
-        // Find or create classification
-        $classification = Classification::firstOrCreate(
-            ['class_number' => $request->class_number],
-            [
-                'isbn' => $request->isbn,
-                'subject' => $request->subject,
-            ]
-        );
+            // Find or create classification
+            $classification = Classification::firstOrCreate(
+                ['class_number' => $request->class_number],
+                [
+                    'isbn' => $request->isbn,
+                    'subject' => $request->subject,
+                ]
+            );
 
-        // Link stock to classification
-        $stock->classification_id = $classification->id;
-        
-        // Update stock's own fields if provided
-        if ($request->has('stock_subject')) {
-            $stock->subject = $request->stock_subject;
+            // Link stock to classification
+            $stock->classification_id = $classification->id;
+            
+            // Update stock's own fields if provided
+            if ($request->has('stock_subject')) {
+                $stock->subject = $request->stock_subject;
+            }
+            if ($request->has('stock_isbn')) {
+                $stock->isbn = $request->stock_isbn;
+            }
+            
+            $stock->save();
+
+            return $this->success(
+                $stock->load('classification'), 
+                'Classification assigned successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->error('Failed to assign classification: ' . $e->getMessage(), 500);
         }
-        if ($request->has('stock_isbn')) {
-            $stock->isbn = $request->stock_isbn;
-        }
-        
-        $stock->save();
-
-        return $this->success(
-            $stock->load('classification'), 
-            'Classification assigned successfully'
-        );
     }
 
     /**
@@ -82,18 +127,26 @@ class StockController extends Controller
      */
     public function removeClassification(Stock $stock)
     {
-        $stock->classification_id = null;
-        $stock->save();
+        try {
+            $stock->classification_id = null;
+            $stock->save();
 
-        return $this->success(
-            $stock->load('classification'), 
-            'Classification removed successfully'
-        );
+            return $this->success(
+                $stock->load('classification'), 
+                'Classification removed successfully'
+            );
+        } catch (\Exception $e) {
+            return $this->error('Failed to remove classification: ' . $e->getMessage(), 500);
+        }
     }
 
     public function destroy(Stock $stock)
     {
-        $stock->delete();
-        return $this->success(null, 'Stock deleted successfully');
+        try {
+            $stock->delete();
+            return $this->success(null, 'Stock deleted successfully');
+        } catch (\Exception $e) {
+            return $this->error('Failed to delete stock: ' . $e->getMessage(), 500);
+        }
     }
 }

@@ -13,21 +13,38 @@ class UpdateArticleRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'date' => 'required|date',
-            'contentDesc' => 'required|string|max:255',
-            'writersDetails' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'issn' => 'required|string|max:255',
-            'articleOrNot' => 'required|string|max:255',
-            'matType' => 'required|string|max:255',
-            'newspaperJournalMagazineName' => 'required|string|max:255',
-            'numberOfPages' => 'required|string|max:255',
-            'poBox' => 'required|string|max:255',
-            'poBoxLocation' => 'required|string|max:255',
-            'telephone' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'website' => 'required|url|max:255',
+        $rules = [
+            'date' => 'sometimes|date',
+            'articleOrNot' => 'sometimes|string|in:article,publication',
+            'newspaperJournalMagazineName' => 'sometimes|string|max:255',
+            'contentDesc' => 'sometimes|string|in:juvenile,adult',
+            'matType' => 'sometimes|string|in:Newspaper,Journal,Magazine',
+            'writersDetails' => 'sometimes|string|max:255',
+            'title' => 'sometimes|string|max:500',
+            'numberOfPages' => 'sometimes|string|max:255',
+            'issn' => 'sometimes|string|max:255',
+            'poBox' => 'sometimes|string|max:255',
+            'poBoxLocation' => 'sometimes|string|max:255',
+            'telephone' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255',
+            'website' => 'sometimes|url|max:255',
+            'subject' => 'nullable|string|max:255',
+            'classification_id' => 'nullable|exists:classifications,id',
         ];
+
+        // Conditional rules for publication
+        if ($this->input('articleOrNot') === 'publication') {
+            $rules['vendor'] = 'sometimes|string|in:legal-deposit,donation,purchase';
+            $rules['copyNo'] = 'sometimes|string|max:255';
+            $rules['matForm'] = 'sometimes|string|in:Hardcopy,Softcopy,Audio,Hardcopy & Audio,Softcopy & Audio,Hardcopy/Softcopy/Audio';
+            $rules['placeOfPublication'] = 'sometimes|string|max:255';
+            $rules['yearOfPublication'] = 'sometimes|string|max:255';
+            
+            if ($this->input('vendor') === 'purchase') {
+                $rules['price'] = 'sometimes|string|max:255';
+            }
+        }
+
+        return $rules;
     }
 }

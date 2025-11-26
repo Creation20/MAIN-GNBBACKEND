@@ -37,7 +37,9 @@ class Stock extends Model
         'nonFictionType',
         'classification_id',
         'sysOfClass',
-        'class_number'
+        'class_number',
+        'materialSource', 
+        'price',          
     ];
 
     protected $casts = [

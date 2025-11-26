@@ -20,8 +20,20 @@ class ArticleController extends Controller
 
     public function store(StoreArticleRequest $request)
     {
-        $article = IndexedArticle::create($request->validated());
-        return $this->success($article->load('classification'), 'Article created successfully', 201);
+        try {
+            $data = $request->validated();
+            
+            // Only include publication fields if articleOrNot is 'Publication'
+            if ($data['articleOrNot'] !== 'Publication') {
+                unset($data['vendor'], $data['copyNo'], $data['matForm'], 
+                      $data['placeOfPublication'], $data['yearOfPublication'], $data['price']);
+            }
+            
+            $article = IndexedArticle::create($data);
+            return $this->success($article->load('classification'), 'Article created successfully', 201);
+        } catch (\Exception $e) {
+            return $this->error('Failed to create article: ' . $e->getMessage(), 500);
+        }
     }
 
     public function show(IndexedArticle $article)
@@ -31,13 +43,29 @@ class ArticleController extends Controller
 
     public function update(UpdateArticleRequest $request, IndexedArticle $article)
     {
-        $article->update($request->validated());
-        return $this->success($article->load('classification'), 'Article updated successfully');
+        try {
+            $data = $request->validated();
+            
+            // Only include publication fields if articleOrNot is 'publication'
+            if (isset($data['articleOrNot']) && $data['articleOrNot'] !== 'publication') {
+                unset($data['vendor'], $data['copyNo'], $data['matForm'], 
+                      $data['placeOfPublication'], $data['yearOfPublication'], $data['price']);
+            }
+            
+            $article->update($data);
+            return $this->success($article->load('classification'), 'Article updated successfully');
+        } catch (\Exception $e) {
+            return $this->error('Failed to update article: ' . $e->getMessage(), 500);
+        }
     }
 
     public function destroy(IndexedArticle $article)
     {
-        $article->delete();
-        return $this->success(null, 'Article deleted successfully');
+        try {
+            $article->delete();
+            return $this->success(null, 'Article deleted successfully');
+        } catch (\Exception $e) {
+            return $this->error('Failed to delete article: ' . $e->getMessage(), 500);
+        }
     }
 }

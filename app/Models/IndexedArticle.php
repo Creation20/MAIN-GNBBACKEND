@@ -21,11 +21,19 @@ class IndexedArticle extends Model
         'matType',
         'newspaperJournalMagazineName',
         'numberOfPages',
+        'subject',
         'classification_id',
+        // Publication-specific fields
+        'vendor',
+        'copyNo',
+        'matForm',
+        'placeOfPublication',
+        'yearOfPublication',
+        'price',
     ];
 
     protected $casts = [
-        'is_gnb_stock' => 'boolean',
+        'date' => 'date',
     ];
 
     public function classification()
