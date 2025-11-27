@@ -11,5 +11,11 @@ class Classification extends Model
     public function stocks()
     {
         return $this->hasMany(Stock::class);
+
+    }
+
+    public function indexedArticles()
+    {
+        return $this->hasMany(IndexedArticle::class);
     }
 }

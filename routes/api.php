@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\Api\ClassificationController;
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\ClassifiedIndexController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/signin', [AuthController::class, 'signin']);
@@ -24,6 +25,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('stock/{stock}/remove-classification', [StockController::class, 'removeClassification']);
         
         Route::apiResource('articles', ArticleController::class);
+        
+        // Classified Index routes
+        Route::get('classified-index/statistics', [ClassifiedIndexController::class, 'statistics']);
+        Route::post('classified-index/generate', [ClassifiedIndexController::class, 'generate']);
+        Route::post('classified-index/search', [ClassifiedIndexController::class, 'search']);
     });
     
     Route::middleware('role:super_admin,classifications_manager')->group(function () {

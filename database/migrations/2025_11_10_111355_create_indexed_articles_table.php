@@ -14,9 +14,7 @@ return new class extends Migration {
     {
         Schema::create('indexed_articles', function (Blueprint $table) {
             $table->id();
-            $table->dropForeign(['classification_id']);
-            $table->dropColumn('classification_id');
-
+         
             // Core Information
             $table->date('date')->comment('Date of publication');
             $table->string('articleOrNot')->comment('Article or Publication');
@@ -38,8 +36,10 @@ return new class extends Migration {
             $table->string('website');
 
             // Additional Information
-            $table->string('subject')->nullable()->change();
-
+            $table->string('subject')->nullable();
+            
+            // Foreign Keys
+            $table->foreignId('classification_id')->nullable()->constrained('classifications')->onDelete('set null');
 
             // Publication-Specific Fields (required when articleOrNot = 'Publication')
             $table->string('vendor')->nullable()->comment('Required for Publications: Legal Deposits, Donation, or Purchase');
@@ -48,9 +48,6 @@ return new class extends Migration {
             $table->string('placeOfPublication')->nullable()->comment('Required for Publications: Place of publication');
             $table->string('yearOfPublication')->nullable()->comment('Required for Publications: Year of publication');
             $table->string('price')->nullable()->comment('Required when vendor is Purchase');
-
-            // Foreign Keys
-            $table->foreignId('classification_id')->nullable()->after('subject')->constrained('classifications')->onDelete('set null');
 
             // Timestamps
             $table->timestamps();
@@ -71,6 +68,5 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists('indexed_articles');
-
     }
 };
