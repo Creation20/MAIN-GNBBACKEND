@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\Api\ClassificationController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\ClassifiedIndexController;
+use App\Http\Controllers\Api\GNBController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/signin', [AuthController::class, 'signin']);
@@ -30,6 +31,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('classified-index/statistics', [ClassifiedIndexController::class, 'statistics']);
         Route::post('classified-index/generate', [ClassifiedIndexController::class, 'generate']);
         Route::post('classified-index/search', [ClassifiedIndexController::class, 'search']);
+        
+        // GNB routes
+        Route::get('search-by-gnb/{gnb}', [GNBController::class, 'searchByGNB']);
+        Route::get('gnb-statistics/{year?}', [GNBController::class, 'getStatistics']);
+        Route::post('get-classification-category', [GNBController::class, 'getClassificationCategory']);
     });
     
     Route::middleware('role:super_admin,classifications_manager')->group(function () {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\IndexedArticle;
+use App\Models\Classification;
 use App\Traits\ApiResponse;
 
 class ArticleController extends Controller
@@ -29,6 +30,14 @@ class ArticleController extends Controller
                       $data['placeOfPublication'], $data['yearOfPublication'], $data['price']);
             }
             
+            // If classification_id is provided, get the class_number
+            if (isset($data['classification_id']) && $data['classification_id']) {
+                $classification = Classification::find($data['classification_id']);
+                if ($classification) {
+                    $data['class_number'] = $classification->class_number;
+                }
+            }
+            
             $article = IndexedArticle::create($data);
             return $this->success($article->load('classification'), 'Article created successfully', 201);
         } catch (\Exception $e) {
@@ -50,6 +59,17 @@ class ArticleController extends Controller
             if (isset($data['articleOrNot']) && $data['articleOrNot'] !== 'publication') {
                 unset($data['vendor'], $data['copyNo'], $data['matForm'], 
                       $data['placeOfPublication'], $data['yearOfPublication'], $data['price']);
+            }
+            
+            // If classification_id is being updated, sync the class_number
+            if (isset($data['classification_id']) && $data['classification_id']) {
+                $classification = Classification::find($data['classification_id']);
+                if ($classification) {
+                    $data['class_number'] = $classification->class_number;
+                }
+            } elseif (isset($data['classification_id']) && $data['classification_id'] === null) {
+                // If classification is being removed, clear the class_number
+                $data['class_number'] = null;
             }
             
             $article->update($data);

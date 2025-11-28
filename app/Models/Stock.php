@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Services\GNBService;
 
 class Stock extends Model
 {
@@ -16,6 +17,9 @@ class Stock extends Model
         'author',
         'isbn',
         'gnb',
+        'gnb_number',
+        'gnb_year',
+        'gnb_sequence',
         'copyNo',
         'accessionNo',
         'areaOfResponsibility',
@@ -66,16 +70,58 @@ class Stock extends Model
         return $this->contentDesc;
     }
 
-    // Automatically sync class_number when classification changes
+    /**
+     * Boot method to handle automatic GNB generation and classification category
+     */
     protected static function boot()
     {
         parent::boot();
 
-        static::saving(function ($stock) {
+        // Handle GNB generation on creation
+        static::creating(function ($stock) {
+            if ($stock->date && !$stock->gnb_number) {
+                $gnbService = new GNBService();
+                $gnbData = $gnbService->generateGNBNumber($stock->date, 'stocks');
+                
+                $stock->gnb_number = $gnbData['gnb_number'];
+                $stock->gnb_year = $gnbData['gnb_year'];
+                $stock->gnb_sequence = $gnbData['gnb_sequence'];
+            }
+
+            // Auto-assign classification category based on class_number
+            if ($stock->class_number && !$stock->sysOfClass) {
+                $gnbService = new GNBService();
+                $stock->sysOfClass = $gnbService->getClassificationCategory($stock->class_number);
+            }
+        });
+
+        // Handle updates
+        static::updating(function ($stock) {
+            // Regenerate GNB if date changes
+            if ($stock->isDirty('date') && $stock->date) {
+                $gnbService = new GNBService();
+                $gnbData = $gnbService->generateGNBNumber($stock->date, 'stocks');
+                
+                $stock->gnb_number = $gnbData['gnb_number'];
+                $stock->gnb_year = $gnbData['gnb_year'];
+                $stock->gnb_sequence = $gnbData['gnb_sequence'];
+            }
+
+            // Update classification category if class_number changes
+            if ($stock->isDirty('class_number') && $stock->class_number) {
+                $gnbService = new GNBService();
+                $stock->sysOfClass = $gnbService->getClassificationCategory($stock->class_number);
+            }
+
+            // Sync class_number from classification if classification_id changes
             if ($stock->classification_id && $stock->isDirty('classification_id')) {
                 $classification = Classification::find($stock->classification_id);
                 if ($classification) {
                     $stock->class_number = $classification->class_number;
+                    
+                    // Also update sysOfClass
+                    $gnbService = new GNBService();
+                    $stock->sysOfClass = $gnbService->getClassificationCategory($classification->class_number);
                 }
             }
         });

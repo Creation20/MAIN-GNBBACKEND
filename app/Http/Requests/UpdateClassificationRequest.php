@@ -16,7 +16,6 @@ class UpdateClassificationRequest extends FormRequest
         $classificationId = $this->route('classification') ? $this->route('classification')->id : null;
         
         return [
-            'title' => 'nullable|string',
             'class_number' => 'sometimes|string|unique:classifications,class_number,'.$classificationId,
             'isbn' => 'nullable|string',
             'subject'=> 'nullable|string',

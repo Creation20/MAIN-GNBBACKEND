@@ -14,7 +14,6 @@ class StoreClassificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'nullable|string',
             'class_number' => 'required|string|unique:classifications',
             'isbn' => 'nullable|string',
             'subject'=> 'nullable|string',

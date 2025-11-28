@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('indexed_articles', function (Blueprint $table) {
             $table->id();
-         
+
             // Core Information
             $table->date('date')->comment('Date of publication');
             $table->string('articleOrNot')->comment('Article or Publication');
@@ -22,22 +22,22 @@ return new class extends Migration {
             $table->string('matType')->comment('Newspaper, Journal, or Magazine');
 
             // Bibliographic Information
-            $table->string('title')->comment('Article/Publication title');
+            $table->string('title')->nullable()->comment('Article/Publication title');
             $table->string('writersDetails')->comment('Author/Writer name');
-            $table->string('newspaperJournalMagazineName')->comment('Publication name');
-            $table->string('numberOfPages')->comment('Number of pages');
+            $table->string('newspaperJournalMagazineName')->nullable()->comment('Publication name');
+            $table->string('numberOfPages')->nullable()->comment('Number of pages');
             $table->string('issn')->comment('Serial No/Vol No/ISSN');
 
             // Contact Information
-            $table->string('poBox');
-            $table->string('poBoxLocation');
-            $table->string('telephone');
-            $table->string('email');
-            $table->string('website');
+            $table->string('poBox')->nullable();
+            $table->string('poBoxLocation')->nullable();
+            $table->string('telephone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('website')->nullable();
 
             // Additional Information
             $table->string('subject')->nullable();
-            
+
             // Foreign Keys
             $table->foreignId('classification_id')->nullable()->constrained('classifications')->onDelete('set null');
 
@@ -59,6 +59,16 @@ return new class extends Migration {
             $table->index('classification_id');
             $table->index('created_at');
             $table->index('date');
+
+            // Add GNB-related columns
+            $table->string('gnb_number')->nullable()->unique();
+            $table->integer('gnb_year')->nullable()->index();
+            $table->integer('gnb_sequence')->nullable();
+
+            $table->string('class_number')->nullable();
+            $table->string('sysOfClass')->nullable();
+            // Add index for faster querying
+            $table->index(['gnb_year', 'gnb_sequence']);
         });
     }
 
@@ -67,6 +77,12 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::table('indexed_articles', function (Blueprint $table) {
+            $table->dropColumn(['class_number', 'sysOfClass']);
+        });
+
+
         Schema::dropIfExists('indexed_articles');
     }
+
 };
