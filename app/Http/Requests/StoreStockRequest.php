@@ -42,7 +42,7 @@ class StoreStockRequest extends FormRequest
             'website' => 'nullable|url|max:255',
             'subject' => 'nullable|string|max:255',
             'gnb' => 'nullable|string|max:255',
-            'isBNOrissnNo '=> '',
+            'isbnOrIssn' => '',
             'classification_id' => 'nullable|exists:classifications,id',
         ];
 

@@ -158,7 +158,7 @@ class ClassifiedIndexController extends Controller
                     'year' => $stock->yearOfPublication,
                     'pages' => $stock->numberOfPages,
                     'isbn' => $stock->isbn,
-                    'gnb' => $stock->gnb,
+                    'gnb' => $stock->gnb_number,
                     'place_of_publication' => $stock->placeOfPublication
                 ];
             }
@@ -408,7 +408,7 @@ class ClassifiedIndexController extends Controller
                 'isbn' => $article->issn,
                 'class_number' => $article->classification->class_number ?? 'N/A',
                 'subject' => $article->subject,
-                'contentDesc' => $article->contentDesc,
+                'contentDesc' => $article->contentDesc, 
                 'date' => $article->date
             ];
         }

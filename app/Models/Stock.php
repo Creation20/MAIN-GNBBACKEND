@@ -7,6 +7,8 @@ use App\Services\GNBService;
 
 class Stock extends Model
 {
+    public static $snakeAttributes = false;
+
     protected $fillable = [
         'date',
         'vendor',
